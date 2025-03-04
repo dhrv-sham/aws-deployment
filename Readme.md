@@ -165,8 +165,12 @@ curl ipinfo.io
 * ICMP protocol  is an ping command used for making an connection  
 
 
-
-
+##### Cloud Formation & Launching Templates
+* Infrastructure code services where you can write a template file and put it on cloud formation and at the time of replicas you run the files on the aws and creates the thing 
+* .yaml and .json templates contain resources 
+* stack - With AWS CloudFormation, you define all your AWS resources (EC2, S3, RDS, Load Balancer, Security Groups, etc.) in a single stack using a YAML or JSON template. Then, at deployment time, you run that stack, and CloudFormation provisions everything automatically.
+* Changesets -  A Change Set in AWS CloudFormation is a way to preview changes before updating a stack. It shows you what resources will be added, modified, or deleted when applying an update. Just Like an github
+* Uses are AWS Sam (lamda functions ) , serverless , Terraform , Cloud-Developmnet-Cloud 
 
 
 
