@@ -41,6 +41,7 @@ aws --endpoint-url=http://localhost:4566 s3 ls
 * -> System accounts (running backrgound task like webservers)
 
 ```sh
+#  for current directory
 pwd
 sudo ls /root
 # create file
@@ -50,6 +51,11 @@ vi file-name.ext
 # remove the file 
 rm file-name.ext
 # :wq for write and exit 
+# for entering into the new directory
+cd /myebsvol/
+# makes new file with name touch 1.txt
+# creates files with permisiion from the sudo
+sudo touch 1.txt
 
 
 ```
@@ -150,14 +156,12 @@ curl ipinfo.io
 * subnet (11.0.1.0/24) <- routeTable <- internetGateway (0.0.0.0/0)
 * Elastic Ip address - Unchanged IPV4 address even when the instance are restarted
 
-```sh
 
-``` 
 
 ##### Security Groups [rules b|w the aws resources]
-* control the inbound and outbound traffic rules between aws resources like loadbalancer , ec2 and buckets   through Port and sorce 
-* where as firewall is responsible for the request made between aws and the user  
-* inbound is the incoming request from user to ec2
+* Control the inbound and outbound traffic rules between aws resources like loadbalancer , ec2 and buckets   through Port and sorce 
+* Where as firewall is responsible for the request made between aws and the user  
+* Inbound is the incoming request from user to ec2
 * Outbound traffic is data that moves from a network to an external destination
 * 0.0.0.0/0 points to all the ip addresses
 * SSH default port is 22
@@ -171,6 +175,59 @@ curl ipinfo.io
 * stack - With AWS CloudFormation, you define all your AWS resources (EC2, S3, RDS, Load Balancer, Security Groups, etc.) in a single stack using a YAML or JSON template. Then, at deployment time, you run that stack, and CloudFormation provisions everything automatically.
 * Changesets -  A Change Set in AWS CloudFormation is a way to preview changes before updating a stack. It shows you what resources will be added, modified, or deleted when applying an update. Just Like an github
 * Uses are AWS Sam (lamda functions ) , serverless , Terraform , Cloud-Developmnet-Cloud 
+
+##### EC2 Load Balanacing Groups 
+* VPC(auto-balancer) - > internetGateway -> subnet (2 subnet) -> RouteTable -> TargetGroup -> Loadbalancer -> autoscale group -> template of instances
+* Load balancer points to the target group 
+* Target Group focus on the request and decide whcih resource should be allocated
+* Target group has linked to  auto scale group which points to the launch template
+* Instances / templates must have ssh and http allow request 
+* Loadbalancer points to target group and target group points to the ec2 instances
+* AutoScale the instances based on the traffic 
+* Configure the min ec2 instance and max ec2 instances
+* Loadbalancer always minimum two availibilty zones for sure 
+
+
+### EBS Volumes
+* Additional storage that can be attached attached to the instance 
+* Volumes types ->  gp3 , gp2 for general purpose 
+* io2 , io1 for high intensive io interaction 
+* volume should be in the same region as where the ec2 instance is
+
+
+##### Creating a Volume / Snapshot  and attached it to the EC2 instance 
+* create volume under EC2 section hhaving volume sub section
+* Volume need to be attached to the instance and also need to be mounted the directory of an instance 
+* /dev/sdk  refers to the where you wnat to store the volume in your system
+* Mounting a volume means attaching a storage device (like an external disk, SSD, or network drive) to a specific directory in the Linux file system, so you can access its data.
+* Increasing the EBS vol is fine but decreasing the size is not recomended
+* Snapshot is the backup-disk created of an EBS volume 
+* Snapshot is the backup of an storage at a particular instance
+* Snapshot is taken of volume at tiemstamp need to be converted into vols and then mounted to particualr instances 
+
+
+```sh
+# /dev/xvdk location of vol 
+# /myebsvol is the directory where vol get mounted 
+# check the volumes which are there in the ec2 instance
+lsblk
+# to check out the division of the disk in the ec2 instance
+sudo fdisk -l
+#  to check the file system of the disk
+sudo file -s /dev/xvdk
+#  creating file system of the disk with  XFS filesystem.
+sudo mkfs -t xfs /dev/xvdk
+# making the directory to mount the ebs vol in the directory
+sudo mkdir /myebsvol
+# mounting the file to the volume 
+sudo mount /dev/xvdk /myebsvol
+# unmount the directory 
+sudo umount /myebsvol
+#  list the files in the directory
+ls -lart /myebsvol/
+# shows disk space usage for all mounted filesystems 
+df -h
+```
 
 
 
