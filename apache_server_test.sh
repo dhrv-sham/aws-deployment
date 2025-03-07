@@ -1,5 +1,6 @@
 #!/bin/bash
 # Update system packages
+# Updated Version Of the file
 yes | sudo apt update
 yes | sudo apt install apache2
 
