@@ -239,7 +239,7 @@ df -h
 * They are best suited for fault-tolerant, flexible workloads like big data, machine learning, and batch processing.
 * <mark>On-Demand</mark> EC2 Instances are virtual servers on AWS that you can rent per hour or per second without any long-term commitment. 
 * You pay only for what you use, making them flexible and suitable for applications that need consistent and reliable performance.
-* ----------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------
 * Create  Instance template  -> Go to Spot Instance Request For the Spot Instances -> Confugure Things -> You Got the SPOTS EC2 instances
 * Set the Target Group to the Created Instnaces and then SET_UP LOAD BALANCER AS WELL
 * After The LoadBalancer setup you cna directly ping to the PUBLIC DNS NAME 
