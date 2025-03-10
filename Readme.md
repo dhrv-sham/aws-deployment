@@ -357,13 +357,14 @@ aws s3 ls s3://$srcname --recursive
 * Create Route 53 hosted domain
 * Obtain the Name Server (NS) records from Route 53.
 * Add these NS records to the domain registrar's DNS settings (where you bought the domain)
+* <mark> Linking The Aws Route with Domain Name </mark> Create Route-53 hosted zone with domin name you purchased and add the value from the route and add it to the namespace of Domain Name where you added 
 * <mark>CNAME - </mark>Instead of pointing a domain name to an IP address (A record does this), a CNAME points one domain to another host/domain name.
-* <mark> Linkking The Aws Route with Domain Name </mark> Create Route-53 hosted zone with domin name you purchased and add the value from the route and add it to the namespace of Domain Name wehre you added 
+* When using Route 53 (DNS) and CloudFront (CDN) together, an SSL certificate ensures that traffic between users and CloudFront is secure and encrypted (HTTPS). 
 * <mark> Generate an SSL certificate for the subdomain using AWS Certificate Manager (ACM). </mark>
-* Create CloudFront -> link it with s3 bucket -> Create OAC policies -> generate SSl Certificate for subdomain -> Post on  the Cloud Front
+* Create CloudFront -> link it with s3 bucket -> Create OAC policies -> generate SSl Certificate for subdomain -> Post on  the Cloud Front    -> Add the SSL certificate in ROUTE-53 zone
 * Configure Route 53 to use the SSL certificate by ensuring CloudFront is associated with the correct domain name.
 * Create S3 bucket -> Add File in S3 Bucekt as index.html 
-* <mark> Linkint the AWS Route 53 with the CloudFront </mark> - Create A new subdomain in the hosted zone whih will pointed to the CloufFront
+* <mark> Linking the AWS Route 53 with the CloudFront </mark> - Create A new subdomain in the hosted zone which will pointed to the CloufFront
 
 
 
