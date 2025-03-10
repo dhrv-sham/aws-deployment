@@ -364,7 +364,166 @@ aws s3 ls s3://$srcname --recursive
 * Create CloudFront -> link it with s3 bucket -> Create OAC policies -> generate SSl Certificate for subdomain -> Post on  the Cloud Front    -> Add the SSL certificate in ROUTE-53 zone
 * Configure Route 53 to use the SSL certificate by ensuring CloudFront is associated with the correct domain name.
 * Create S3 bucket -> Add File in S3 Bucekt as index.html 
-* <mark> Linking the AWS Route 53 with the CloudFront </mark> - Create A new subdomain in the hosted zone which will pointed to the CloufFront
+* <mark> Linking the AWS Route 53 with the CloudFront </mark> - Create A new subdomain in the hosted zone which will pointed to the CloudFront
+
+### Lamda Functions 
+* Lamda is just an executor which takes code as an input 
+* EC2 ia an operating server 
+* Lamda is  no server setup , no start / stop , serverless
+* Trigger -> Lamda -> Destination
+---
+* Import libraries and ceate handler function as well
+* try to import all the libraries in the venv so that lambda function executes well
+* You can add env files as well in lambda function
+* You can get fucntion from s3 buckets [zip files ] or directly uploading zip files 
+
+##### Set-up Lamda Function
+```sh
+# install modules in the directory and need to create virtual environment
+pip3 install -r requirements.txt
+```
+---
+##### Lamda function Template
+```py
+# while creating a lamda fucntion it is neccasssary to have a handler function and import files as well
+import json
+
+# lamda _handler fucntion is the main function which is called by the lamda function
+def lambda_handler(event,context) :
+    print("Hello Lamda")
+    return {
+        "statusCode": 200,
+        "body": json.dumps("Hello from Lamda!")
+    }
+```
+---
+##### Lambda Layers 
+* Layer refers to the Custom Library which includes buisness logic
+* Created once and can be used multiple times 
+* /Users/dhruv/Desktop/aws_deployments/lamda_layer/python/lib/python3.13/site-packages/my_module/file_name
+---
+### Topics to cover --> 
+##### API Gateway - Lambda
+
+##### S3 - Lambda
+
+##### SQS - Lambda
+
+##### SNS - Lambda
+
+##### Step Function - Lambda
+
+##### Dynamo DB - Lambda
+
+##### Lambda - Lambda
+
+
+### ECS -> Elastic Container Services 
+##### Production tips 
+* Bind Mounts should not be used in the production 
+* <mark> Container apps might need a build step eg. React App </mark>
+* <mark> Multi Container Projects need to be split accross multiple hosts/remote machines  </mark>
+---
+### AWS EC2- Remote  Hosting
+* Though this Approach is not good as it is a - Do-it-yourself approach 
+* Manually managed netwroks / secuirty groups and software updation 
+###### Install Docker on ec2
+```sh
+# use either yum or apt 
+sudo apt update -y
+sudo apt install -y docker.io
+sudo service docker start
+```
+
+##### Install and Run Container
+```sh
+sudo docker pull dhrvsharma/dep-aws-1:latest
+sudo docker run --platform linux/arm64 dhrvsharma/dep-aws-1:latest
+```
+---
+##### ECS services 
+* Manager Remote Machines 
+* Creation , Management Updating it automatically thorugh the AWS ECS
+* <mark> Cluster -> </mark>
+* <mark> Services -> </mark>
+* <mark> Task -> </mark>
+
+
+
+##### EKS Server
+* EKS cluster is used by tool ekstl
+* EKS creates ADD ons like CoreDNS , Kube proxy ,  AMAZON VPC CNI
+* CoreDNS is suitable for  DNS name resolving 
+---
+##### Setup 
+```sh
+brew install eksctl
+```
+--- 
+##### Creating the Cluster
+* <mark> --full-ecr-access </mark> Gives access to the  Elastic contianer registry
+* <mark> --alb-ingress-access </mark> gives aaccess to the load-balancers 
+
+```sh
+eksctl create cluster --full-ecr-access --alb-ingress-access --region us-east-1
+kubectl config get-contexts
+kubectl config set-contexts
+```
+
+##### Deployment on EKS
+* selector focus on the which pods to be managed
+* labels gives the key - value assignment to the ind either deployment , services , pods
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 2  # Ensures 2 Pods are running
+  selector:
+    matchLabels:
+      app: nginx  # Deployment manages Pods with this label
+  template:
+    metadata:
+      labels:
+        app: nginx  # Pods will have this label
+    spec:
+      containers:
+        - name: nginx
+          image: nginx  # Official Nginx image from Docker Hub
+          ports:
+            - containerPort: 80  # Nginx serves on port 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  labels:
+    app: nginx
+spec:
+  type: LoadBalancer  # Exposes service externally on a NodePort
+  ports:
+    - targetPort: 80  # The port inside the Pod
+      nodePort: 30080  # External port on each node
+      port: 80  # Service's internal port
+      protocol: TCP
+  selector:
+    app: nginx  # Matches Pods with 'app: nginx' label
+
+```
+
+---
+```sh
+kubectl apply -f nginx-nodeport.yaml 
+kubectl get services 
+```
+ 
+
+
+
+
 
 
 
