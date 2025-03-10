@@ -354,6 +354,7 @@ aws s3 ls s3://$srcname --recursive
 ---
 ##### Setup Static Website S3
 * <mark> Amazon Route 53 </mark>is a highly available and scalable domain name system (DNS) web service provided by AWS.
+* Create Route 53 hosted domain
 * Obtain the Name Server (NS) records from Route 53.
 * Add these NS records to the domain registrar's DNS settings (where you bought the domain)
 * <mark>CNAME - </mark>Instead of pointing a domain name to an IP address (A record does this), a CNAME points one domain to another host/domain name.
