@@ -347,8 +347,22 @@ aws s3 ls s3://$srcname --recursive
 ```
 
 ##### Cloud Front Distrubution
-* 
-
+* To remove delay lateny we use Cloud Front [Edge Lcoation] 
+* Origin domain of Cloudfront is the domain name of the s3 bucket 
+* First Requet might take little time after the first request s3 object is cached into <mark> Edge Location of all the aws - zones </mark> 
+* <mark> First create S3 bucket -> Then create cloud front distrubution -> then need to add OAC Policies - > after Creating cloudfront -> Copy the policies from the Cloudfront and edit the policies of the s3 bucket </mark>
+---
+##### Setup Static Website S3
+* <mark> Amazon Route 53 </mark>is a highly available and scalable domain name system (DNS) web service provided by AWS.
+* Obtain the Name Server (NS) records from Route 53.
+* Add these NS records to the domain registrar's DNS settings (where you bought the domain)
+* <mark>CNAME - </mark>Instead of pointing a domain name to an IP address (A record does this), a CNAME points one domain to another host/domain name.
+* <mark> Linkking The Aws Route with Domain Name </mark> Create Route-53 hosted zone with domin name you purchased and add the value from the route and add it to the namespace of Domain Name wehre you added 
+* <mark> Generate an SSL certificate for the subdomain using AWS Certificate Manager (ACM). </mark>
+* Create CloudFront -> link it with s3 bucket -> Create OAC policies -> generate SSl Certificate for subdomain -> Post on  the Cloud Front
+* Configure Route 53 to use the SSL certificate by ensuring CloudFront is associated with the correct domain name.
+* Create S3 bucket -> Add File in S3 Bucekt as index.html 
+* <mark> Linkint the AWS Route 53 with the CloudFront </mark> - Create A new subdomain in the hosted zone whih will pointed to the CloufFront
 
 
 
