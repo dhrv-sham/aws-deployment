@@ -27,7 +27,7 @@ metadata:
   labels:
     app: nginx
 spec:
-  type: LoadBalancer  # Exposes service externally on a NodePort
+  type: NodePort  # Exposes service externally on a NodePort
   ports:
     - targetPort: 80  # The port inside the Pod
       nodePort: 30080  # External port on each node
