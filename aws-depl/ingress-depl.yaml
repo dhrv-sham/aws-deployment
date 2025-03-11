@@ -6,7 +6,7 @@ metadata:
   labels:
     app: 2048-nginx-ingress
 spec:
-  ingressClassName: alb
+  ingressClassName: "nginx"
   rules:
     - host: $host-domain
       http:

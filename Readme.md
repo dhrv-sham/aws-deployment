@@ -473,6 +473,8 @@ kubectl config set-contexts
 ##### Deployment on EKS
 * selector focus on the which pods to be managed
 * labels gives the key - value assignment to the ind either deployment , services , pods
+* Loadbalancer exposes the services to an single External Ip
+* Nodeport expose the services to every unique Ip id to every cluster 
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -513,12 +515,75 @@ spec:
     app: nginx  # Matches Pods with 'app: nginx' label
 
 ```
-
 ---
+##### EKS Deployment through loadBalancing
+* You need to Add security groups for https request -> need to update security group -> listeners settings of load balancer -> need certifcate as well
+* Protocol port is the default port of Protocol which is used for listening 
+* Instance port is the port on which you are actually running the container on ec2instance
+* <mark> Aplication Load balancer </mark> Client -> loadBalancer (http/https:80) : loadbalancer -> nodeport (workernode:TCP:30080) : workerNode -> pod (TCP:80) [service] : pod -> Response running on loaclhost at port 30080 (80:30080)
+* Remember you need to add TCP inbound connection as well as outbond conenction in the instance while connecting with the TCP protoccol
 ```sh
-kubectl apply -f nginx-nodeport.yaml 
+kubectl apply -f $yaml 
 kubectl get services 
+kubectl edit configmap aws-auth -n kube-system
+aws eks update-kubeconfig --region us-east-1 --name $clusterName
 ```
+
+##### Ingress 
+* <mark> Ingress in EKS </mark>
+* Configruing automatic loadbalancer which can scale-up and scale-down automatically 
+##### Policies Attachement
+```sh
+aws iam attach-user-policy --user-name dhruvUser --policy-arn arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+aws iam attach-user-policy --user-name dhruvUser --policy-arn arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+aws iam attach-user-policy --user-name dhruvUser --policy-arn arn:aws:iam::aws:policy/AmazonEC2FullAccess
+aws iam attach-user-policy --user-name dhruvUser --policy-arn arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess
+aws iam attach-user-policy --user-name dhruvUser --policy-arn arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+```
+---
+##### Install AWS loadbalancer controller 
+* Make Sure You Current log in user have the above polies over there
+```sh
+# Create an IAM OIDC provider. You can skip this step if you already have one for your cluster.
+eksctl utils associate-iam-oidc-provider \
+    --region us-east-1 \    
+    --cluster amazing-outfit-1741666985 \
+    --approve
+
+# download policy  
+curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.8.2/docs/install/iam_policy.json
+
+# create policy 
+aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://iam-policy.json
+
+# Ass ABove policies as well    
+# create role 
+eksctl create iamserviceaccount \
+    --cluster=amazing-outfit-1741666985 \
+    --namespace=kube-system \
+    --name=aws-load-balancer-controller \
+    --attach-policy-arn=arn:aws:iam:975050207730:policy/AWSLoadBalancerControllerIAMPolicy \
+    --override-existing-serviceaccounts \
+    --region us-east-1 \
+    --approve 
+
+# Add the EKS chart repo to Helm
+helm repo add eks https://aws.github.io/eks-charts    
+
+# install load balancer
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
+  -n kube-system \ 
+  --set clusterName=amazing-outfit-1741666985 \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller
+  
+# Get all the runnig pods
+kubectl get pods -n kube-system
+```
+
+##### SetUp Load Balancer
  
 
 
